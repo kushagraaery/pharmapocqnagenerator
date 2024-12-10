@@ -261,71 +261,6 @@ if not st.session_state.report_data.empty:
             else:
                 st.error("Error while appending data to Google Sheets!")
 
-# Header section
-st.markdown('<div class="main-header">💬 Pharma Insights Chatbot </div>', unsafe_allow_html=True)
-st.markdown('💡 This app features a chatbot powered by OpenAI for answering society-related queries.', unsafe_allow_html=True)
-
-# Predefined Prompt Buttons in a grid
-st.markdown('<div class="prompt-buttons">', unsafe_allow_html=True)
-cols = st.columns(3)
-
-prompt = None
-
-with cols[0]:
-    if st.button("What are the top 5 or top 10 oncology societies in California actively supporting clinical trials and research initiatives?"):
-        prompt = "What are the top 5 or top 10 oncology societies in California actively supporting clinical trials and research initiatives?"
-with cols[1]:
-    if st.button("Which oncology society in California has the largest membership network and reach?"):
-        prompt = "Which oncology society in California has the largest membership network and reach?"
-with cols[2]:
-    if st.button("Which Oncology Societies in California collaborate with pharmaceutical companies for drug development initiatives?"):
-        prompt = "Which Oncology Societies in California collaborate with pharmaceutical companies for drug development initiatives?"
-
-# Add additional buttons in another row
-cols = st.columns(3)
-with cols[0]:
-    if st.button("List the Oncology Societies in California that offer leadership opportunities for healthcare professionals."):
-        prompt = "List the Oncology Societies in California that offer leadership opportunities for healthcare professionals."
-with cols[1]:
-    if st.button("Which Oncology Societies in California are most active in influencing state healthcare policies?"):
-        prompt = "Which Oncology Societies in California are most active in influencing state healthcare policies?"
-with cols[2]:
-    if st.button("Identify oncology societies in California that provide resources or support for community-based oncology practices."):
-        prompt = "Identify oncology societies in California that provide resources or support for community-based oncology practices."
-st.markdown('</div>', unsafe_allow_html=True)
-
-# Chat Input Section
-user_input = st.chat_input("Ask a question or select a prompt...")
-
-# Initialize session state for chat history
-if "messages" not in st.session_state:
-    st.session_state["messages"] = [{"role": "assistant", "content": "How can I assist you today?"}]
-
-# Append user input or prompt to chat history
-if prompt or user_input:
-    user_message = prompt if prompt else user_input
-    st.session_state["messages"].append({"role": "user", "content": user_message})
-
-    # Query OpenAI API with the current messages
-    with st.spinner("Generating response..."):
-        try:
-            response = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
-                messages=st.session_state["messages"]
-            )
-            bot_reply = response.choices[0]["message"]["content"]
-            st.session_state["messages"].append({"role": "assistant", "content": bot_reply})
-        except Exception as e:
-            bot_reply = f"Error retrieving response: {e}"
-            st.session_state["messages"].append({"role": "assistant", "content": bot_reply})
-
-# Display chat history sequentially
-for msg in st.session_state["messages"]:
-    if msg["role"] == "user":
-        st.chat_message("user").write(msg["content"])
-    elif msg["role"] == "assistant":
-        st.chat_message("assistant").write(msg["content"])
-
 # Chatbot 2.0 Section with Enhanced Styling and Animations
 st.markdown('<div class="main-header">🤖 Chatbot 2.0 - Fine-Tuned on Report Data</div>', unsafe_allow_html=True)
 st.markdown("📋 This chatbot uses OpenAI and the **consolidated report** data to answer your queries.")
@@ -455,13 +390,13 @@ cols = st.columns(3)
 
 with cols[0]:
     if st.button("List down all the societies inside the Report."):
-        chat_input_2 = "List down all the societies inside the Report."
+        chat_input_2 = "List down all the societies inside the Report only if there is report data."
 with cols[1]:
     if st.button("Which Society do you think is the best out of all and why?"):
-        chat_input_2 = "Which Society do you think is the best out of all and why?"
+        chat_input_2 = "Which Society do you think is the best out of all and why only if there is report data?"
 with cols[2]:
     if st.button("Tell me the society names with highest and lowest count of membership."):
-        chat_input_2 = "Tell me the society names with highest and lowest count of membership."
+        chat_input_2 = "Tell me the society names with highest and lowest count of membership only if there is report data."
 st.markdown('</div>', unsafe_allow_html=True)
 
 # Process Chatbot 2.0 input
@@ -499,47 +434,67 @@ for msg in st.session_state["messages_2"]:
         )
 st.markdown('</div>', unsafe_allow_html=True)
 
+# Header section
+st.markdown('<div class="main-header">💬 Pharma Insights Chatbot </div>', unsafe_allow_html=True)
+st.markdown('💡 This app features a chatbot powered by OpenAI for answering society-related queries.', unsafe_allow_html=True)
 
-# def append_to_google_sheet_public(df):
-#     try:
-#         # Connect to Google Sheet in anonymous mode
-#         gc = gspread.Client(auth=None)
-#         gc.login()  # Login as an anonymous user
-        
-#         # Open the sheet by its URL
-#         sheet = gc.open_by_url("https://docs.google.com/spreadsheets/d/1fmI1t3TGFvQddL4h_tb_9hYaPoC350VsAAt1YeTMiIo/edit?gid=0#gid=0")
-        
-#         # Select the first worksheet
-#         worksheet = sheet.get_worksheet(0)
+# Predefined Prompt Buttons in a grid
+st.markdown('<div class="prompt-buttons">', unsafe_allow_html=True)
+cols = st.columns(3)
 
-#         # Convert DataFrame to a list of lists
-#         data_to_append = df.values.tolist()
+prompt = None
 
-#         # Append data to the sheet
-#         worksheet.append_rows(data_to_append)
-#         return "Success"
-#     except Exception as e:
-#         return f"Error: {e}"
+with cols[0]:
+    if st.button("What are the top 10 oncology societies in California actively supporting clinical trials and research initiatives?"):
+        prompt = "What are the top 10 oncology societies in California actively supporting clinical trials and research initiatives?"
+with cols[1]:
+    if st.button("Which Oncology Society in the World has the largest membership network and reach?"):
+        prompt = "Which Oncology Society in the World has the largest membership network and reach?"
+with cols[2]:
+    if st.button("Which Oncology Societies in California collaborate with pharmaceutical companies for drug development initiatives?"):
+        prompt = "Which Oncology Societies in California collaborate with pharmaceutical companies for drug development initiatives?"
 
-# # Streamlit Button to Append Data
-# if st.button("Append Data to Google Sheets"):
-#     result = append_to_google_sheet_public(st.session_state.report_data)
-#     if result == "Success":
-#         st.success("Data has been successfully appended to Google Sheets!")
-#     else:
-#         st.error(f"Error appending data to Google Sheets: {result}")
+# Add additional buttons in another row
+cols = st.columns(3)
+with cols[0]:
+    if st.button("List the Oncology Societies in California that offer leadership opportunities for healthcare professionals."):
+        prompt = "List the Oncology Societies in California that offer leadership opportunities for healthcare professionals."
+with cols[1]:
+    if st.button("Which Oncology Societies in California are most active in influencing state healthcare policies?"):
+        prompt = "Which Oncology Societies in California are most active in influencing state healthcare policies?"
+with cols[2]:
+    if st.button("Identify oncology societies in California that provide resources or support for community-based oncology practices."):
+        prompt = "Identify oncology societies in California that provide resources or support for community-based oncology practices."
+st.markdown('</div>', unsafe_allow_html=True)
 
-# def append_to_google_sheet(df):
-#         scope = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive.file"]
-#         creds = ServiceAccountCredentials.from_json_keyfile_name("credentials.json", scope)
-#         client = gspread.authorize(creds)
-#         sheet = client.open_by_url("https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID")
-#         worksheet = sheet.get_worksheet(0)
-#         worksheet.append_rows(df.values.tolist())
+# Chat Input Section
+user_input = st.chat_input("Ask a question or select a prompt...")
 
-#     if st.button("Append to Google Sheets"):
-#         try:
-#             append_to_google_sheet(st.session_state.report_data)
-#             st.success("Data appended to Google Sheets!")
-#         except Exception as e:
-#             st.error(f"Failed to append data: {e}")
+# Initialize session state for chat history
+if "messages" not in st.session_state:
+    st.session_state["messages"] = [{"role": "assistant", "content": "How can I assist you today?"}]
+
+# Append user input or prompt to chat history
+if prompt or user_input:
+    user_message = prompt if prompt else user_input
+    st.session_state["messages"].append({"role": "user", "content": user_message})
+
+    # Query OpenAI API with the current messages
+    with st.spinner("Generating response..."):
+        try:
+            response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                messages=st.session_state["messages"]
+            )
+            bot_reply = response.choices[0]["message"]["content"]
+            st.session_state["messages"].append({"role": "assistant", "content": bot_reply})
+        except Exception as e:
+            bot_reply = f"Error retrieving response: {e}"
+            st.session_state["messages"].append({"role": "assistant", "content": bot_reply})
+
+# Display chat history sequentially
+for msg in st.session_state["messages"]:
+    if msg["role"] == "user":
+        st.chat_message("user").write(msg["content"])
+    elif msg["role"] == "assistant":
+        st.chat_message("assistant").write(msg["content"])
