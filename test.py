@@ -89,7 +89,7 @@ if "selected_societies" not in st.session_state:
 if "report_data" not in st.session_state:
     st.session_state.report_data = pd.DataFrame(columns=[
         "Society Name",
-        "What is the membership count for society_name? Respond with count or number only.",
+        "What is the membership count for society_name? Respond with one word (number) only.",
         "Does society_name encompasses community sites? Respond one word ('yes' or 'no') only plus provide a justification for the answer also after a comma.",
         "Is society_name influential on state or local policy? Respond one word ('yes' or 'no') only plus provide a justification for the answer also after a comma.",
         "Does society_name provide engagement opportunity with leadership? Respond one word ('yes' or 'no') only plus provide a justification for the answer also after a comma.",
@@ -110,7 +110,7 @@ society_name = st.selectbox("Select the Pharmaceutical Society Name:", [""] + av
 
 # Define updated pharma-specific questions for the society
 questions = [
-    "What is the membership count for society_name? Respond with count or number only.",
+    "What is the membership count for society_name? Respond with one word (number) only.",
     "Does society_name encompasses community sites? Respond one word ('yes' or 'no') only plus provide a justification for the answer also after a comma.",
     "Is society_name influential on state or local policy? Respond one word ('yes' or 'no') only plus provide a justification for the answer also after a comma.",
     "Does society_name provide engagement opportunity with leadership? Respond one word ('yes' or 'no') only plus provide a justification for the answer also after a comma.",
