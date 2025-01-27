@@ -102,7 +102,15 @@ if "report_data" not in st.session_state:
     ])
 
 # Define all available society options
-all_societies = ["FLASCO (Florida Society of Clinical Oncology)", "GASCO (Georgia Society of Clinical Oncology)", " IOS (Indiana Oncology Society)", "IOWA Oncology Society", "MOASC (Medical Oncology Association of Southern California)"]
+all_societies = [
+    "FLASCO (Florida Society of Clinical Oncology)", 
+    "GASCO (Georgia Society of Clinical Oncology)",
+    "PSOH (Pennsylvania Society of Oncology and Hematology)",
+    "WVOS (West Virginia Oncology Society)",
+    "DSCO (Delaware Society of Clinical Oncology)"
+    "OSNJ (Oncology Society of New Jersey)",
+    "ESHOS (Empire State Hematology Oncology Society)"
+]
 
 # Step 2: Filter dropdown options to exclude already selected societies
 available_societies = [society for society in all_societies if society not in st.session_state.selected_societies]
