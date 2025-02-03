@@ -107,7 +107,7 @@ all_societies = [
     "GASCO (Georgia Society of Clinical Oncology)",
     "PSOH (Pennsylvania Society of Oncology and Hematology)",
     "WVOS (West Virginia Oncology Society)",
-    "DSCO (Delaware Society of Clinical Oncology)"
+    "DSCO (Delaware Society of Clinical Oncology)",
     "OSNJ (Oncology Society of New Jersey)",
     "ESHOS (Empire State Hematology Oncology Society)"
 ]
