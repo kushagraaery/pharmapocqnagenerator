@@ -130,16 +130,21 @@ questions = [
     "Name the Region where the society_name is from? Just name the Region in word for the answer."
 ]
 
-# Function to fetch data from OpenAI
-def fetch_society_data(society):
-    if society in st.session_state.selected_societies:
-        return  # Skip if already fetched
 
-    st.session_state.selected_societies.append(society)
-    society_data = {"Society Name": society}
-    modified_questions = [q.replace("society_name", society) for q in questions]
+# Step 3: Generate the report only if a new society name is selected
+if society_name and society_name not in st.session_state.selected_societies:
+    st.session_state.selected_societies.append(society_name)
 
-    with st.spinner(f"Fetching data for {society}..."):
+    # Prepare a list to store the answers for the selected society
+    society_data = {"Society Name": society_name}
+    for question in questions:
+        society_data[question] = ""
+
+    # Replace the placeholder in questions with the selected society name
+    modified_questions = [question.replace("society_name", society_name) for question in questions]
+    print(modified_questions)
+    # Fetch data from OpenAI API for each modified question
+    with st.spinner("Retrieving data..."):
         for i, question in enumerate(modified_questions):
             try:
                 response = openai.ChatCompletion.create(
@@ -147,29 +152,21 @@ def fetch_society_data(society):
                     messages=[{"role": "user", "content": question}]
                 )
                 answer = response["choices"][0]["message"]["content"].strip()
-                society_data[questions[i]] = answer
+                society_data[questions[i]] = answer  # Add answer to corresponding column
+                print(answer)
             except Exception as e:
-                st.error(f"Error fetching data for '{society}': {e}")
+                st.error(f"Error with '{question}': {e}")
                 society_data[questions[i]] = "Error"
 
+    # Append new society data to the report
     st.session_state.report_data = pd.concat([st.session_state.report_data, pd.DataFrame([society_data])], ignore_index=True)
 
-# Fetch data for selected society
-if society_name and st.button("Fetch Data for Selected Society"):
-    fetch_society_data(society_name)
-
-# Fetch data for all societies at once
-if st.button("Fetch Data for All Societies"):
-    with st.spinner("Fetching data for all societies..."):
-        for society in all_societies:
-            fetch_society_data(society)
-
-# Display consolidated report
+# Step 4: Display the report if data is available
 if not st.session_state.report_data.empty:
-    st.write("📊 **Consolidated Tabular Report:**")
+    st.write("Consolidated Tabular Report:")
     st.dataframe(st.session_state.report_data)
 
-    # Function to export DataFrame as Excel
+    # Provide download option for the report
     def to_excel(df):
         output = BytesIO()
         with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
@@ -179,7 +176,7 @@ if not st.session_state.report_data.empty:
     excel_data = to_excel(st.session_state.report_data)
 
     st.download_button(
-        label="⬇️ Download Consolidated Report",
+        label="Download Consolidated Report",
         data=excel_data,
         file_name="Consolidated_Pharma_Report.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
